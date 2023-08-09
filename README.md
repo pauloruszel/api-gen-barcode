@@ -1,2 +1,63 @@
-# api-gen-barcode
-Api para gerar QR Codes, que retorna imagem png ou json com o QR Code.
+# 🎯 API QR Code
+Este é um projeto de API RESTful para geração de QR Codes. Com ele, é possível criar QR Codes personalizados com diferentes tamanhos, cores e opções de download ou visualização.
+
+## Padrões de microserviço utilizados
+* Separação em camadas (Controller, Service)
+* Injeção de dependências com Spring
+* Uso de Record para representação de dados
+
+## ✔️ Tecnologias e bibliotecas usadas
+- `Java 17`
+- `Spring Boot`
+- `Spring WebFlux`
+- `Lombok`
+- `ZXing`
+
+## Endpoint
+- `GET /api/v1/qrcode?texto={texto}&scale={scale}&foreground={foreground}&background={background}&download={download}&base64={base64}`: endpoint para gerar um QR Code com as opções especificadas.
+
+### Exemplo de teste
+Você pode testar o endpoint com o seguinte payload:
+```json
+{
+  "texto": "https://www.google.com.br",
+  "scale": 200,
+  "foreground": "#000000",
+  "background": "#FFFFFF",
+  "download": "true",
+  "base64": "false"
+}
+```
+
+## 🛠️ Execução do projeto
+Para executar o projeto, é necessário ter o Java 17 e o Maven instalados.
+
+## 🚀 Como usar
+## Clone o repositório:
+git clone https://github.com/pauloruszel/api-gen-barcode.git
+
+## 📁 Entre na pasta do projeto:
+```bash
+cd api-gen-barcode
+```
+### Execute o comando abaixo para compilar e empacotar o projeto:
+```bash
+mvn clean package
+```
+
+## Execute o projeto:
+```bash
+java -jar target/api-qr-code-0.0.1-SNAPSHOT.jar
+```
+A API estará disponível em http://localhost:8080.
+
+## Testes unitários
+Para rodar os testes unitários, execute o comando abaixo:
+```bash
+mvn test
+```
+
+## Observações:
+A aplicação permite a geração de QR Codes personalizados, incluindo opções para definir o tamanho, as cores do primeiro plano e do fundo, e se a imagem deve ser baixada ou visualizada no navegador. Também é possível retornar a imagem em formato base64.
+
+
