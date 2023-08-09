@@ -14,7 +14,23 @@ Este é um projeto de API RESTful para geração de QR Codes. Com ele, é possí
 - `ZXing`
 
 ## Endpoint
-- `GET /api/v1/qrcode?texto={texto}&scale={scale}&foreground={foreground}&background={background}&download={download}&base64={base64}`: endpoint para gerar um QR Code com as opções especificadas.
+### Gerar QR Code
+
+- Método: `GET`
+
+```bash
+URL: /api/v1/qrcode?texto={texto}&scale={scale}&foreground={foreground}&background={background}&download={download}&base64={base64}
+```
+Descrição: Endpoint para gerar um QR Code com as opções especificadas.
+
+Parâmetros
+
+- `texto:` O texto que será codificado no QR Code.
+- `scale:` A escala(tamanho) do QR Code.
+- `foreground:` A cor do primeiro plano do QR Code.
+- `background:` A cor do plano de fundo do QR Code.
+- `download:` Opção para download do QR Code (valores possíveis: "true", "false").
+- `base64:` Opção para retornar o QR Code em formato base64 (valores possíveis: "true", "false").
 
 ### Exemplo de teste
 Você pode testar o endpoint com o seguinte payload:
