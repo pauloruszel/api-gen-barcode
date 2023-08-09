@@ -37,9 +37,9 @@ public class QRCodeService {
     }
 
     private void validateParameters(String texto, Integer scale, String foreground, String background) {
-        log.info("Validando parâmetros");
+        log.info("Validando parametros");
         if (StringUtils.isBlank(texto)) {
-            log.error("Texto não pode ser vazio");
+            log.error("Texto nao pode ser vazio");
             throw new IllegalArgumentException("Texto não pode ser vazio");
         }
         if (scale == null || scale <= 0) {
@@ -47,11 +47,11 @@ public class QRCodeService {
             throw new IllegalArgumentException("Scale deve ser maior que 0");
         }
         if (isValidHexColor(foreground)) {
-            log.error("Foreground deve ser uma cor hexadecimal válida");
+            log.error("Foreground deve ser uma cor hexadecimal valida");
             throw new IllegalArgumentException("Foreground deve ser uma cor hexadecimal válida");
         }
         if (isValidHexColor(background)) {
-            log.error("Background deve ser uma cor hexadecimal válida");
+            log.error("Background deve ser uma cor hexadecimal valida");
             throw new IllegalArgumentException("Background deve ser uma cor hexadecimal válida");
         }
     }
