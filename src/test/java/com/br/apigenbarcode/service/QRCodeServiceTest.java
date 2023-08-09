@@ -35,7 +35,7 @@ class QRCodeServiceTest {
         BitMatrix matrix = mock(BitMatrix.class);
         when(multiFormatWriter.encode(anyString(), any(BarcodeFormat.class), anyInt(), anyInt())).thenReturn(matrix);
 
-        byte[] result = qrCodeService.generateQRCode(texto, scale, foreground, background);
+        byte[] result = qrCodeService.gerarQRCode(texto, scale, foreground, background);
         assertNotNull(result);
     }
 
@@ -48,10 +48,10 @@ class QRCodeServiceTest {
 
     @Test
     void testValidateParametersWithInvalidInputs() {
-        assertThrows(IllegalArgumentException.class, () -> qrCodeService.generateQRCode("", 100, "#FFFFFF", "#000000"));
-        assertThrows(IllegalArgumentException.class, () -> qrCodeService.generateQRCode("test", 0, "#FFFFFF", "#000000"));
-        assertThrows(IllegalArgumentException.class, () -> qrCodeService.generateQRCode("test", 100, "FFFFFF", "#000000"));
-        assertThrows(IllegalArgumentException.class, () -> qrCodeService.generateQRCode("test", 100, "#FFFFFF", "000000"));
+        assertThrows(IllegalArgumentException.class, () -> qrCodeService.gerarQRCode("", 100, "#FFFFFF", "#000000"));
+        assertThrows(IllegalArgumentException.class, () -> qrCodeService.gerarQRCode("test", 0, "#FFFFFF", "#000000"));
+        assertThrows(IllegalArgumentException.class, () -> qrCodeService.gerarQRCode("test", 100, "FFFFFF", "#000000"));
+        assertThrows(IllegalArgumentException.class, () -> qrCodeService.gerarQRCode("test", 100, "#FFFFFF", "000000"));
     }
 }
 

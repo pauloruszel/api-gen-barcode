@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -16,6 +15,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 class QRCodeControllerTest {
 
@@ -29,11 +29,11 @@ class QRCodeControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        MockitoAnnotations.openMocks(this);
+        openMocks(this);
 
         qrCodeRequest = new QRCodeRequest("test", 100, "#FFFFFF", "#000000", "false", "false");
         byte[] qrCode = "test".getBytes();
-        when(qrCodeService.generateQRCode(anyString(), anyInt(), anyString(), anyString())).thenReturn(qrCode);
+        when(qrCodeService.gerarQRCode(anyString(), anyInt(), anyString(), anyString())).thenReturn(qrCode);
         when(qrCodeService.encodeBase64(any())).thenReturn("dGVzdA==");
     }
 

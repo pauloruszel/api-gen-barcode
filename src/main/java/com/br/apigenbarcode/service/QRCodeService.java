@@ -1,6 +1,5 @@
 package com.br.apigenbarcode.service;
 
-import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.client.j2se.MatrixToImageConfig;
 import com.google.zxing.common.BitMatrix;
@@ -8,22 +7,23 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.awt.*;
 import java.io.ByteArrayOutputStream;
 
+import static com.google.zxing.BarcodeFormat.QR_CODE;
 import static com.google.zxing.client.j2se.MatrixToImageWriter.writeToStream;
+import static java.awt.Color.decode;
 import static java.util.Base64.getEncoder;
 
 @Service
 @Slf4j
 public class QRCodeService {
 
-    public byte[] generateQRCode(String texto, Integer scale, String foreground, String background) throws Exception {
+    public byte[] gerarQRCode(String texto, Integer scale, String foreground, String background) throws Exception {
         log.info("Gerando QR Code com texto: {}, scale: {}, foreground: {}, background: {}", texto, scale, foreground, background);
-        validateParameters(texto, scale, foreground, background);
+        validarParametros(texto, scale, foreground, background);
 
-        BitMatrix matrix = new MultiFormatWriter().encode(texto, BarcodeFormat.QR_CODE, scale, scale);
-        MatrixToImageConfig config = new MatrixToImageConfig(Color.decode(foreground).getRGB(), Color.decode(background).getRGB());
+        BitMatrix matrix = new MultiFormatWriter().encode(texto, QR_CODE, scale, scale);
+        MatrixToImageConfig config = new MatrixToImageConfig(decode(foreground).getRGB(), decode(background).getRGB());
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         writeToStream(matrix, "PNG", baos, config);
 
@@ -36,7 +36,7 @@ public class QRCodeService {
         return getEncoder().encodeToString(image);
     }
 
-    private void validateParameters(String texto, Integer scale, String foreground, String background) {
+    private void validarParametros(String texto, Integer scale, String foreground, String background) {
         log.info("Validando parametros");
         if (StringUtils.isBlank(texto)) {
             log.error("Texto nao pode ser vazio");

@@ -4,18 +4,15 @@ import com.br.apigenbarcode.record.QRCodeRequest;
 import com.br.apigenbarcode.service.QRCodeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.*;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
-
 import static java.util.Collections.singletonMap;
-import static org.springframework.http.ContentDisposition.builder;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.IMAGE_PNG;
@@ -34,13 +31,13 @@ public class QRCodeController {
     public Mono<ResponseEntity<?>> generateQRCode(final QRCodeRequest request) throws Exception {
         log.info("Recebendo requisição para gerar QR Code");
 
-        var qrCode = qrCodeService.generateQRCode(request.texto(), request.scale(), request.foreground(), request.background());
+        var qrCode = qrCodeService.gerarQRCode(request.texto(), request.scale(), request.foreground(), request.background());
 
         if ("true".equalsIgnoreCase(request.base64())) {
             log.info("Retornando imagem em formato Base64");
             var base64Image = qrCodeService.encodeBase64(qrCode);
             var response = singletonMap("image", base64Image);
-            return just(ResponseEntity.ok().contentType(APPLICATION_JSON).body(response));
+            return just(ok().contentType(APPLICATION_JSON).body(response));
         }
 
         HttpHeaders headers = new HttpHeaders();
