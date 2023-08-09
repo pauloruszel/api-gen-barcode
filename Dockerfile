@@ -9,4 +9,4 @@ COPY ./target/api-gen-barcode-0.0.1-SNAPSHOT.jar .
 
 EXPOSE 8080
 
-ENTRYPOINT java -XX:+TieredCompilation -XX:+OptimizeStringConcat -XX:+UseStringDeduplication -XX:+UseG1GC -jar api-qr-code-0.0.1-SNAPSHOT.jar
+ENTRYPOINT java -XX:+TieredCompilation -XX:+OptimizeStringConcat -XX:+UseStringDeduplication -XX:+UseG1GC -jar api-gen-barcode-0.0.1-SNAPSHOT.jar
