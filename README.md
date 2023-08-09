@@ -20,11 +20,11 @@ Este é um projeto de API RESTful para geração de QR Codes. Com ele, é possí
 Você pode testar o endpoint com o seguinte payload:
 ```json
 {
-  "texto": "https://www.google.com.br",
+  "texto": "https://www.reddit.com",
   "scale": 200,
-  "foreground": "#000000",
-  "background": "#FFFFFF",
-  "download": "true",
+  "foreground": "#9C27B0",
+  "background": "#E1BEE7",
+  "download": "false",
   "base64": "false"
 }
 ```

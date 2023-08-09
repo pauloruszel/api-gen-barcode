@@ -11,9 +11,10 @@ import org.springframework.http.ResponseEntity;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import java.util.Arrays;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class QRCodeControllerTest {
@@ -28,7 +29,7 @@ class QRCodeControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        MockitoAnnotations.openMocks(this); // Inicializa os mocks
+        MockitoAnnotations.openMocks(this);
 
         qrCodeRequest = new QRCodeRequest("test", 100, "#FFFFFF", "#000000", "false", "false");
         byte[] qrCode = "test".getBytes();
@@ -40,9 +41,12 @@ class QRCodeControllerTest {
     void testGenerateQRCodeWithBase64() throws Exception {
         qrCodeRequest = new QRCodeRequest("test", 100, "#FFFFFF", "#000000", "false", "true");
 
-        Mono<ResponseEntity<byte[]>> response = qrCodeController.generateQRCode(qrCodeRequest);
+        Mono<ResponseEntity<?>> response = qrCodeController.generateQRCode(qrCodeRequest);
         StepVerifier.create(response)
-                .assertNext(res -> assertArrayEquals(("{\"image\":\"" + "dGVzdA==" + Arrays.toString("\"}".getBytes())).getBytes(), res.getBody()))
+                .assertNext(res -> {
+                    Map<String, String> responseBody = (Map<String, String>) res.getBody();
+                    assertEquals("dGVzdA==", responseBody.get("image"));
+                })
                 .verifyComplete();
     }
 
@@ -50,17 +54,19 @@ class QRCodeControllerTest {
     void testGenerateQRCodeWithDownload() throws Exception {
         qrCodeRequest = new QRCodeRequest("test", 100, "#FFFFFF", "#000000", "true", "false");
 
-        Mono<ResponseEntity<byte[]>> response = qrCodeController.generateQRCode(qrCodeRequest);
+        Mono<ResponseEntity<?>> response = qrCodeController.generateQRCode(qrCodeRequest);
         StepVerifier.create(response)
-                .assertNext(res -> assertArrayEquals("test".getBytes(), res.getBody()))
+                .assertNext(res -> assertArrayEquals("test".getBytes(), (byte[]) res.getBody()))
                 .verifyComplete();
     }
 
+
     @Test
     void testGenerateQRCodeWithoutBase64AndDownload() throws Exception {
-        Mono<ResponseEntity<byte[]>> response = qrCodeController.generateQRCode(qrCodeRequest);
+        Mono<ResponseEntity<?>> response = qrCodeController.generateQRCode(qrCodeRequest);
         StepVerifier.create(response)
-                .assertNext(res -> assertArrayEquals("test".getBytes(), res.getBody()))
+                .assertNext(res -> assertArrayEquals("test".getBytes(), (byte[]) res.getBody()))
                 .verifyComplete();
     }
+
 }
