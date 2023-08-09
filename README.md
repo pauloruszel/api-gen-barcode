@@ -44,10 +44,9 @@ cd api-gen-barcode
 ```bash
 mvn clean package
 ```
-
-## Execute o projeto:
+## 🐳 Execute o docker-compose:
 ```bash
-java -jar target/api-qr-code-0.0.1-SNAPSHOT.jar
+docker-compose up --build
 ```
 A API estará disponível em http://localhost:8080.
 
@@ -59,5 +58,3 @@ mvn test
 
 ## Observações:
 A aplicação permite a geração de QR Codes personalizados, incluindo opções para definir o tamanho, as cores do primeiro plano e do fundo, e se a imagem deve ser baixada ou visualizada no navegador. Também é possível retornar a imagem em formato base64.
-
-
