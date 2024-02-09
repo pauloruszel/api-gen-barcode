@@ -5,18 +5,20 @@ import com.br.apigenbarcode.service.QRCodeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ContentDisposition;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
-import static java.util.Collections.singletonMap;
-import static org.springframework.http.HttpStatus.OK;
+import java.util.Map;
+
+import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.IMAGE_PNG;
+import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.ok;
+import static reactor.core.publisher.Mono.error;
 import static reactor.core.publisher.Mono.just;
 
 @Slf4j
@@ -38,26 +40,18 @@ public class QRCodeController {
         final var isDownload = "true".equalsIgnoreCase(request.download());
         final var isBase64 = "true".equalsIgnoreCase(request.base64());
 
-        if (!isDownload && !isBase64) {
-            log.error("pelo menos uma das opcoes download ou base64 deve ser true.");
-            return just(ok().contentType(APPLICATION_JSON).body(singletonMap("error", "Pelo menos uma das opções download ou base64 deve ser verdadeira.")));
-        }
+        // Usando switch expression para simplificar a lógica
+        return switch (isDownload + "|" + isBase64) {
+            case "true|false" ->
+                    just(ok().contentType(IMAGE_PNG).header(CONTENT_DISPOSITION, ContentDisposition.attachment().filename("qrcode.png").build().toString()).body(qrCode));
+            case "false|true" ->
+                    just(ok().contentType(APPLICATION_JSON).body(Map.of("image", qrCodeService.encodeBase64(qrCode))));
+            case "false|false" ->
+                    just(badRequest().body(Map.of("error", "Pelo menos uma das opções download ou base64 deve ser verdadeira.")));
+            case "true|true" ->
+                    just(badRequest().body(Map.of("error", "Apenas uma das opções download ou base64 deve ser verdadeira.")));
+            default -> error(new IllegalStateException("Combinação inesperada de download e base64"));
+        };
 
-        if (isDownload && isBase64) {
-            log.error("apenas uma das opcoes download ou base64 deve ser true.");
-            return just(ok().contentType(APPLICATION_JSON).body(singletonMap("error", "Apenas uma das opções download ou base64 deve ser verdadeira.")));
-        }
-
-        if (isBase64) {
-            final var base64Image = qrCodeService.encodeBase64(qrCode);
-            log.info("Retornando a imagem em formato Base64");
-            return just(ok().contentType(APPLICATION_JSON).body(singletonMap("image", base64Image)));
-        } else {
-            log.info("Configurando para download da imagem");
-            final var headers = new HttpHeaders();
-            headers.setContentType(IMAGE_PNG);
-            headers.setContentDisposition(ContentDisposition.builder("attachment").filename("qrcode.png").build());
-            return just(new ResponseEntity<>(qrCode, headers, OK));
-        }
     }
 }
