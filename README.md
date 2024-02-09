@@ -1,5 +1,11 @@
 # 🎯 API QR Code
-Este é um projeto de API RESTful para geração de QR Codes e gerenciamento de convidados para eventos. Com ele, é possível criar QR Codes personalizados com diferentes tamanhos, cores e opções de download ou visualização. Além disso, oferece funcionalidades para cadastrar e confirmar a presença de convidados através de QR Codes únicos.
+Este projeto consiste em uma API RESTful versátil projetada para a geração de QR Codes personalizáveis e o gerenciamento eficiente de convidados para eventos diversos. Através desta API, usuários podem criar QR Codes adaptáveis, permitindo ajustes em tamanho, cor, e oferecendo alternativas entre download direto e visualização online.
+
+Além de sua funcionalidade principal de geração de QR Codes, a API se estende para facilitar o gerenciamento de convidados, incorporando recursos para o cadastro e a confirmação de presença de convidados via QR Codes únicos. Esses QR Codes podem ser utilizados para uma variedade de propósitos, incluindo, mas não se limitando a, controle de acesso a eventos, validação de identidade e facilitação no gerenciamento de registros de presença.
+
+Implementada com uma arquitetura baseada em microserviços, esta API adota as melhores práticas de desenvolvimento, incluindo separação de responsabilidades através da distinção entre camadas de Controller e Service, injeção de dependências para maior flexibilidade e manutenibilidade do código, e o uso de padrões reativos com Spring WebFlux para lidar com eventos de maneira não bloqueante, garantindo assim um desempenho superior em ambientes com alto volume de requisições.
+
+Este projeto é ideal para organizadores de eventos, sistemas de gestão de acesso, e desenvolvedores que buscam integrar funcionalidades de geração de QR Code e gerenciamento de convidados de forma eficiente e escalável em suas aplicações.
 
 ## Padrões de microserviço utilizados
 * Separação em camadas (Controller, Service)
