@@ -98,8 +98,9 @@ Para executar o projeto, é necessário ter o Java 21 e o Maven instalados, alé
 
 ## 🚀 Como usar
 ## Clone o repositório:
+```bash
 git clone https://github.com/pauloruszel/api-gen-barcode.git
-
+```
 ## 📁 Entre na pasta do projeto:
 ```bash
 cd api-gen-barcode
