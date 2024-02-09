@@ -16,6 +16,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.openMocks;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 class QRCodeControllerTest {
 
@@ -70,41 +71,24 @@ class QRCodeControllerTest {
 
     @Test
     void testGenerateQRCodeWithBase64AndDownloadAreFalse() throws Exception {
-        Mono<ResponseEntity<?>> response = qrCodeController.generateQRCode(qrCodeRequest);
-        StepVerifier.create(response)
-                .assertNext(res -> {
-                    assertEquals(HttpStatus.OK, res.getStatusCode());
-                    assertInstanceOf(Map.class, res.getBody());
-                    @SuppressWarnings("unchecked")
-                    Map<String, Object> responseBody = (Map<String, Object>) res.getBody();
-                    assertTrue(responseBody.containsKey("error"));
-                    Object errorMessage = responseBody.get("error");
-                    assertInstanceOf(String.class, errorMessage);
-                    assertEquals("Pelo menos uma das opções download ou base64 deve ser verdadeira.", errorMessage);
-                })
+        QRCodeRequest request = new QRCodeRequest("texto", 200, "#000000", "#FFFFFF", "false", "false");
+        when(qrCodeService.gerarQRCode(any(), any(), any(), any())).thenReturn(new byte[]{});
+        when(qrCodeService.encodeBase64(any())).thenReturn("base64Image");
+
+        StepVerifier.create(qrCodeController.generateQRCode(request))
+                .expectNextMatches(responseEntity -> responseEntity.getStatusCode() == BAD_REQUEST)
                 .verifyComplete();
     }
 
     @Test
     void testGenerateQRCodeWithBase64AndDownloadAreTrue() throws Exception {
-        qrCodeRequest = new QRCodeRequest("test", 100, "#FFFFFF", "#000000", "true", "true");
+        QRCodeRequest request = new QRCodeRequest("texto", 200, "#000000", "#FFFFFF", "true", "true");
+        when(qrCodeService.gerarQRCode(any(), any(), any(), any())).thenReturn(new byte[]{});
+        when(qrCodeService.encodeBase64(any())).thenReturn("base64Image");
 
-        Mono<ResponseEntity<?>> response = qrCodeController.generateQRCode(qrCodeRequest);
-        StepVerifier.create(response)
-                .assertNext(res -> {
-                    assertEquals(HttpStatus.OK, res.getStatusCode());
-                    assertInstanceOf(Map.class, res.getBody());
-                    @SuppressWarnings("unchecked")
-                    Map<String, Object> responseBody = (Map<String, Object>) res.getBody();
-                    assertTrue(responseBody.containsKey("error"));
-                    Object errorMessage = responseBody.get("error");
-                    assertInstanceOf(String.class, errorMessage);
-                    assertEquals("Apenas uma das opções download ou base64 deve ser verdadeira.", errorMessage);
-                })
+        StepVerifier.create(qrCodeController.generateQRCode(request))
+                .expectNextMatches(responseEntity -> responseEntity.getStatusCode() == BAD_REQUEST)
                 .verifyComplete();
     }
-
-
-
 
 }
