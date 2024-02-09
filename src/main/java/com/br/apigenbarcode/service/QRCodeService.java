@@ -18,26 +18,26 @@ import static java.util.Base64.getEncoder;
 @Slf4j
 public class QRCodeService {
 
-    public byte[] gerarQRCode(String texto, Integer scale, String foreground, String background) throws Exception {
-        log.info("Gerando QR Code com texto: {}, scale: {}, foreground: {}, background: {}", texto, scale, foreground, background);
+    public byte[] gerarQRCode(final String texto, final Integer scale, final String foreground, final String background) throws Exception {
+        log.info("gerando QR Code com texto: {}, scale: {}, foreground: {}, background: {}", texto, scale, foreground, background);
         validarParametros(texto, scale, foreground, background);
 
-        BitMatrix matrix = new MultiFormatWriter().encode(texto, QR_CODE, scale, scale);
-        MatrixToImageConfig config = new MatrixToImageConfig(decode(foreground).getRGB(), decode(background).getRGB());
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final var matrix = new MultiFormatWriter().encode(texto, QR_CODE, scale, scale);
+        final var config = new MatrixToImageConfig(decode(foreground).getRGB(), decode(background).getRGB());
+        final var baos = new ByteArrayOutputStream();
         writeToStream(matrix, "PNG", baos, config);
 
         log.info("QR Code gerado com sucesso");
         return baos.toByteArray();
     }
 
-    public String encodeBase64(byte[] image) {
+    public String encodeBase64(final byte[] image) {
         log.info("Codificando imagem em Base64");
         return getEncoder().encodeToString(image);
     }
 
-    private void validarParametros(String texto, Integer scale, String foreground, String background) {
-        log.info("Validando parametros");
+    private void validarParametros(final String texto, final Integer scale, final String foreground, final String background) {
+        log.info("inicio das validacoes dos parametros com texto: {}, scale: {}, foreground: {}, background: {}", texto, scale, foreground, background);
         if (StringUtils.isBlank(texto)) {
             log.error("Texto nao pode ser vazio");
             throw new IllegalArgumentException("Texto não pode ser vazio");
@@ -54,9 +54,10 @@ public class QRCodeService {
             log.error("Background deve ser uma cor hexadecimal valida");
             throw new IllegalArgumentException("Background deve ser uma cor hexadecimal válida");
         }
+        log.info("fim das validacoes dos parametros com texto: {}, scale: {}, foreground: {}, background: {}", texto, scale, foreground, background);
     }
 
-    private boolean isValidHexColor(String color) {
+    private boolean isValidHexColor(final String color) {
         return color == null || !color.matches("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$");
     }
 }

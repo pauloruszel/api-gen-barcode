@@ -6,14 +6,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -44,11 +44,18 @@ class QRCodeControllerTest {
         Mono<ResponseEntity<?>> response = qrCodeController.generateQRCode(qrCodeRequest);
         StepVerifier.create(response)
                 .assertNext(res -> {
-                    Map<String, String> responseBody = (Map<String, String>) res.getBody();
-                    assertEquals("dGVzdA==", responseBody.get("image"));
+                    assertEquals(HttpStatus.OK, res.getStatusCode());
+                    assertInstanceOf(Map.class, res.getBody());
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> responseBody = (Map<String, Object>) res.getBody();
+                    assertTrue(responseBody.containsKey("image"));
+                    Object imageValue = responseBody.get("image");
+                    assertInstanceOf(String.class, imageValue);
+                    assertEquals("dGVzdA==", imageValue);
                 })
                 .verifyComplete();
     }
+
 
     @Test
     void testGenerateQRCodeWithDownload() throws Exception {
@@ -62,11 +69,42 @@ class QRCodeControllerTest {
 
 
     @Test
-    void testGenerateQRCodeWithoutBase64AndDownload() throws Exception {
+    void testGenerateQRCodeWithBase64AndDownloadAreFalse() throws Exception {
         Mono<ResponseEntity<?>> response = qrCodeController.generateQRCode(qrCodeRequest);
         StepVerifier.create(response)
-                .assertNext(res -> assertArrayEquals("test".getBytes(), (byte[]) res.getBody()))
+                .assertNext(res -> {
+                    assertEquals(HttpStatus.OK, res.getStatusCode());
+                    assertInstanceOf(Map.class, res.getBody());
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> responseBody = (Map<String, Object>) res.getBody();
+                    assertTrue(responseBody.containsKey("error"));
+                    Object errorMessage = responseBody.get("error");
+                    assertInstanceOf(String.class, errorMessage);
+                    assertEquals("Pelo menos uma das opções download ou base64 deve ser verdadeira.", errorMessage);
+                })
                 .verifyComplete();
     }
+
+    @Test
+    void testGenerateQRCodeWithBase64AndDownloadAreTrue() throws Exception {
+        qrCodeRequest = new QRCodeRequest("test", 100, "#FFFFFF", "#000000", "true", "true");
+
+        Mono<ResponseEntity<?>> response = qrCodeController.generateQRCode(qrCodeRequest);
+        StepVerifier.create(response)
+                .assertNext(res -> {
+                    assertEquals(HttpStatus.OK, res.getStatusCode());
+                    assertInstanceOf(Map.class, res.getBody());
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> responseBody = (Map<String, Object>) res.getBody();
+                    assertTrue(responseBody.containsKey("error"));
+                    Object errorMessage = responseBody.get("error");
+                    assertInstanceOf(String.class, errorMessage);
+                    assertEquals("Apenas uma das opções download ou base64 deve ser verdadeira.", errorMessage);
+                })
+                .verifyComplete();
+    }
+
+
+
 
 }

@@ -29,25 +29,35 @@ public class QRCodeController {
 
     @GetMapping("/qrcode")
     public Mono<ResponseEntity<?>> generateQRCode(final QRCodeRequest request) throws Exception {
-        log.info("Recebendo requisição para gerar QR Code");
+        log.info("recebendo a requisicao para gerar QR Code");
 
-        var qrCode = qrCodeService.gerarQRCode(request.texto(), request.scale(), request.foreground(), request.background());
+        log.info("inicio da geracao do QR Code com texto: {} scala: {} foreground: {} background: {}", request.texto(), request.scale(), request.foreground(), request.background());
+        final var qrCode = qrCodeService.gerarQRCode(request.texto(), request.scale(), request.foreground(), request.background());
+        log.info("fim da geracao do QR Code com texto: {} scala: {} foreground: {} background: {}", request.texto(), request.scale(), request.foreground(), request.background());
 
-        if ("true".equalsIgnoreCase(request.base64())) {
-            log.info("Retornando imagem em formato Base64");
-            var base64Image = qrCodeService.encodeBase64(qrCode);
-            var response = singletonMap("image", base64Image);
-            return just(ok().contentType(APPLICATION_JSON).body(response));
+        final boolean isDownload = "true".equalsIgnoreCase(request.download());
+        final boolean isBase64 = "true".equalsIgnoreCase(request.base64());
+
+        if (!isDownload && !isBase64) {
+            log.error("pelo menos uma das opcoes download ou base64 deve ser true.");
+            return just(ok().contentType(APPLICATION_JSON).body(singletonMap("error", "Pelo menos uma das opções download ou base64 deve ser verdadeira.")));
         }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(IMAGE_PNG);
-        if ("true".equalsIgnoreCase(request.download())) {
+        if (isDownload && isBase64) {
+            log.error("apenas uma das opcoes download ou base64 deve ser true.");
+            return just(ok().contentType(APPLICATION_JSON).body(singletonMap("error", "Apenas uma das opções download ou base64 deve ser verdadeira.")));
+        }
+
+        if (isBase64) {
+            final String base64Image = qrCodeService.encodeBase64(qrCode);
+            log.info("Retornando a imagem em formato Base64");
+            return just(ok().contentType(APPLICATION_JSON).body(singletonMap("image", base64Image)));
+        } else {
             log.info("Configurando para download da imagem");
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(IMAGE_PNG);
             headers.setContentDisposition(ContentDisposition.builder("attachment").filename("qrcode.png").build());
+            return just(new ResponseEntity<>(qrCode, headers, OK));
         }
-
-        log.info("Retornando imagem como PNG");
-        return just(new ResponseEntity<>(qrCode, headers, OK));
     }
 }
