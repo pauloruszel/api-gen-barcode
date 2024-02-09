@@ -1,4 +1,4 @@
-FROM ghcr.io/graalvm/graalvm-ce:22.3.1 AS build-native
+FROM ghcr.io/graalvm/jdk-community:21 AS build-native
 
 ENV DOCKER_CONTENT_TRUST 1
 ENV APP_RUNTIME_NAME api-gen-barcode
