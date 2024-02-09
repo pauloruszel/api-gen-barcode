@@ -1,10 +1,11 @@
 # 🎯 API QR Code
-Este é um projeto de API RESTful para geração de QR Codes. Com ele, é possível criar QR Codes personalizados com diferentes tamanhos, cores e opções de download ou visualização.
+Este é um projeto de API RESTful para geração de QR Codes e gerenciamento de convidados para eventos. Com ele, é possível criar QR Codes personalizados com diferentes tamanhos, cores e opções de download ou visualização. Além disso, oferece funcionalidades para cadastrar e confirmar a presença de convidados através de QR Codes únicos.
 
 ## Padrões de microserviço utilizados
 * Separação em camadas (Controller, Service)
 * Injeção de dependências com Spring
 * Uso de Record para representação de dados
+* Reativo com Spring WebFlux
 
 ## ✔️ Tecnologias e bibliotecas usadas
 - `Java 21`
@@ -12,8 +13,10 @@ Este é um projeto de API RESTful para geração de QR Codes. Com ele, é possí
 - `Spring WebFlux`
 - `Lombok`
 - `ZXing`
+- `PostgreSQL` com R2DBC para reatividade no acesso ao banco de dados
+- `Docker` para conteinerização
 
-## Endpoint
+## Endpoints
 ### Gerar QR Code
 
 - Método: `GET`
@@ -21,14 +24,13 @@ Este é um projeto de API RESTful para geração de QR Codes. Com ele, é possí
 ```bash
 URL: /api/v1/qrcode?texto={texto}&scale={scale}&foreground={foreground}&background={background}&download={download}&base64={base64}
 ```
-Descrição: Endpoint para gerar um QR Code com as opções especificadas.
+Descrição: Gera um QR Code com as opções especificadas.
 
 Parâmetros
-
 - `texto:` O texto que será codificado no QR Code.
-- `scale:` A escala(tamanho) do QR Code.
+- `scale:` A escala (tamanho) do QR Code.
 - `foreground:` A cor do primeiro plano do QR Code.
-- `background:` A cor do plano de fundo do QR Code.
+- `download:` A cor do plano de fundo do QR Code.
 - `download:` Opção para download do QR Code (valores possíveis: "true", "false").
 - `base64:` Opção para retornar o QR Code em formato base64 (valores possíveis: "true", "false").
 
@@ -45,8 +47,38 @@ Você pode testar o endpoint com o seguinte payload:
 }
 ```
 
+### Cadastrar Convidado
+- Método: `POST`
+
+```bash
+URL: /convidados/cadastrar
+```
+Descrição: Cadastra um convidado e gera um QR Code único para confirmação de presença.
+
+Exemplo de Payload para Cadastro de Convidado
+```json
+{
+  "nome": "Fulano de Tal",
+  "email": "fulano@example.com"
+}
+```
+Nota: Os campos idUnico, status e qrCode são gerados automaticamente pelo sistema e não devem ser incluídos no payload de envio.
+
+## Confirmar Presença
+- Método: `POST`
+
+```bash
+URL: /convidados/confirmar/{idUnico}
+```
+Descrição: Confirma a presença de um convidado através do ID único fornecido pelo QR Code.
+
+Exemplo para Confirmar Convidado
+```bash
+localhost:8080/convidados/confirmar/e5b87a8c-6ed4-4995-b272-66d3d9dc5ba9
+```
+
 ## 🛠️ Execução do projeto
-Para executar o projeto, é necessário ter o Java 21 e o Maven instalados.
+Para executar o projeto, é necessário ter o Java 21 e o Maven instalados, além de Docker para a conteinerização.
 
 ## 🚀 Como usar
 ## Clone o repositório:
