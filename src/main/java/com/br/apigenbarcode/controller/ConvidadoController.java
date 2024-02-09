@@ -28,7 +28,9 @@ public class ConvidadoController {
 
     @GetMapping("/confirmar/{idUnico}")
     public Mono<ResponseEntity<Object>> confirmarPresenca(@PathVariable String idUnico) {
-        return convidadoService.confirmarPresenca(idUnico)
+        final var idUnicoFormatado = idUnico.trim().replaceAll("[^a-zA-Z0-9\\-]", "");
+
+        return convidadoService.confirmarPresenca(idUnicoFormatado)
                 .map(confirmado -> {
                     if (confirmado) {
                         final var responseMessage = Map.of("mensagem", "Presença confirmada com sucesso!");
