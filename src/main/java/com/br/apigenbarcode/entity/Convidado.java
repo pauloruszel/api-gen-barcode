@@ -5,6 +5,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.time.LocalDateTime;
+
 @Table("convidado")
 @Builder
 @Getter
@@ -30,4 +32,10 @@ public class Convidado {
 
     @Column("qr_code")
     private String qrCode;
+
+    @Column("dt_criacao")
+    private LocalDateTime dataCriacao;
+
+    @Column("dt_atualizacao")
+    private LocalDateTime dataAtualizacao;
 }
