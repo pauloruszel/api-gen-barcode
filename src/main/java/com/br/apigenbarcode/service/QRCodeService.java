@@ -1,13 +1,19 @@
 package com.br.apigenbarcode.service;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.client.j2se.MatrixToImageConfig;
-import com.google.zxing.common.BitMatrix;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
+import java.awt.*;
 import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
 
 import static com.google.zxing.BarcodeFormat.QR_CODE;
 import static com.google.zxing.client.j2se.MatrixToImageWriter.writeToStream;
@@ -59,5 +65,19 @@ public class QRCodeService {
 
     private boolean isValidHexColor(final String color) {
         return color == null || !color.matches("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$");
+    }
+
+    public Mono<byte[]> gerarQRCodeReativo(final String texto, final Integer scale, final String foreground, final String background) {
+        return Mono.fromCallable(() -> {
+            log.info("gerando QR Code com texto: {}, scale: {}, foreground: {}, background: {}", texto, scale, foreground, background);
+            validarParametros(texto, scale, foreground, background);
+
+            final var hints = new HashMap<EncodeHintType, Object>();
+            final var matrix = new MultiFormatWriter().encode(texto, BarcodeFormat.QR_CODE, scale, scale, hints);
+            final var config = new MatrixToImageConfig(Color.decode(foreground).getRGB(), Color.decode(background).getRGB());
+            final var baos = new ByteArrayOutputStream();
+            MatrixToImageWriter.writeToStream(matrix, "PNG", baos, config);
+            return baos.toByteArray();
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 }
