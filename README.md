@@ -7,8 +7,8 @@ Este é um projeto de API RESTful para geração de QR Codes. Com ele, é possí
 * Uso de Record para representação de dados
 
 ## ✔️ Tecnologias e bibliotecas usadas
-- `Java 17`
-- `Spring Boot`
+- `Java 21`
+- `Spring Boot 3.2.2`
 - `Spring WebFlux`
 - `Lombok`
 - `ZXing`
@@ -46,7 +46,7 @@ Você pode testar o endpoint com o seguinte payload:
 ```
 
 ## 🛠️ Execução do projeto
-Para executar o projeto, é necessário ter o Java 17 e o Maven instalados.
+Para executar o projeto, é necessário ter o Java 21 e o Maven instalados.
 
 ## 🚀 Como usar
 ## Clone o repositório:
