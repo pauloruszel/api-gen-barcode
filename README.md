@@ -82,6 +82,16 @@ Exemplo para Confirmar Convidado
 ```bash
 localhost:8080/convidados/confirmar/e5b87a8c-6ed4-4995-b272-66d3d9dc5ba9
 ```
+Imagem com os endpoints no Swagger:
+
+URL para acessar o Swagger:
+
+```bash
+localhost:8080/swagger-ui.html
+```
+
+![image](https://github.com/pauloruszel/api-gen-barcode/assets/12766450/02043cf8-2101-4000-a585-382c01991147)
+
 
 ## 🛠️ Execução do projeto
 Para executar o projeto, é necessário ter o Java 21 e o Maven instalados, além de Docker para a conteinerização.
