@@ -90,7 +90,7 @@ URL para acessar o Swagger:
 localhost:8080/swagger-ui.html
 ```
 
-![image](https://github.com/pauloruszel/api-gen-barcode/assets/12766450/02043cf8-2101-4000-a585-382c01991147)
+![image](https://github.com/pauloruszel/api-gen-barcode/assets/12766450/85d34995-9e91-4125-a8bf-92aea8010482)
 
 
 ## 🛠️ Execução do projeto
