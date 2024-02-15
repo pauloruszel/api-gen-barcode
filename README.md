@@ -57,7 +57,7 @@ Você pode testar o endpoint com o seguinte payload:
 - Método: `POST`
 
 ```bash
-URL: /convidados/cadastrar
+URL: localhost:8080/api/v1/convidados/cadastrar
 ```
 Descrição: Cadastra um convidado e gera um QR Code único para confirmação de presença.
 
@@ -74,13 +74,13 @@ Nota: Os campos idUnico, status e qrCode são gerados automaticamente pelo siste
 - Método: `POST`
 
 ```bash
-URL: /convidados/confirmar/{idUnico}
+URL: localhost:8080/api/v1/convidados/confirmar/{idUnico}
 ```
 Descrição: Confirma a presença de um convidado através do ID único fornecido pelo QR Code.
 
 Exemplo para Confirmar Convidado
 ```bash
-localhost:8080/convidados/confirmar/e5b87a8c-6ed4-4995-b272-66d3d9dc5ba9
+localhost:8080/api/v1/convidados/confirmar/e5b87a8c-6ed4-4995-b272-66d3d9dc5ba9
 ```
 Imagem com os endpoints no Swagger:
 
@@ -114,12 +114,6 @@ mvn clean package
 docker-compose up --build
 ```
 A API estará disponível em http://localhost:8080.
-
-## Testes unitários
-Para rodar os testes unitários, execute o comando abaixo:
-```bash
-mvn test
-```
 
 ## Observações:
 A aplicação permite a geração de QR Codes personalizados, incluindo opções para definir o tamanho, as cores do primeiro plano e do fundo, e se a imagem deve ser baixada ou visualizada no navegador. Também é possível retornar a imagem em formato base64.
