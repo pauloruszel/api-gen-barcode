@@ -13,20 +13,20 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.ResponseEntity.*;
 
 @RestController
-@RequestMapping("/convidados")
+@RequestMapping("/api/v1")
 public class ConvidadoController {
 
     @Autowired
     private ConvidadoService convidadoService;
 
-    @PostMapping("/cadastrar")
+    @PostMapping("/convidados/cadastrar")
     public Mono<ResponseEntity<Convidado>> cadastrarConvidado(@RequestBody Convidado convidado) {
         return convidadoService.cadastrarConvidado(convidado.getNome(), convidado.getEmail())
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(badRequest().build());
     }
 
-    @GetMapping("/confirmar/{idUnico}")
+    @GetMapping("/convidados/confirmar/{idUnico}")
     public Mono<ResponseEntity<Object>> confirmarPresenca(@PathVariable String idUnico) {
         final var idUnicoFormatado = idUnico.trim().replaceAll("[^a-zA-Z0-9\\-]", "");
 
