@@ -1,6 +1,5 @@
 package com.br.apigenbarcode.service;
 
-import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.client.j2se.MatrixToImageConfig;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 
@@ -73,8 +71,8 @@ public class QRCodeService {
             validarParametros(texto, scale, foreground, background);
 
             final var hints = new HashMap<EncodeHintType, Object>();
-            final var matrix = new MultiFormatWriter().encode(texto, BarcodeFormat.QR_CODE, scale, scale, hints);
-            final var config = new MatrixToImageConfig(Color.decode(foreground).getRGB(), Color.decode(background).getRGB());
+            final var matrix = new MultiFormatWriter().encode(texto, QR_CODE, scale, scale, hints);
+            final var config = new MatrixToImageConfig(decode(foreground).getRGB(), decode(background).getRGB());
             final var baos = new ByteArrayOutputStream();
             MatrixToImageWriter.writeToStream(matrix, "PNG", baos, config);
             return baos.toByteArray();

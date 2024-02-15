@@ -1,5 +1,6 @@
 package com.br.apigenbarcode.entity;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
@@ -18,9 +19,11 @@ public class Convidado {
     @Id
     private Long id;
 
+    @NotNull
     @Column("nome")
     private String nome;
 
+    @NotNull
     @Column("email")
     private String email;
 

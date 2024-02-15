@@ -4,7 +4,6 @@ import com.br.apigenbarcode.record.QRCodeRequest;
 import com.br.apigenbarcode.service.QRCodeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ContentDisposition;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +12,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
+import static org.springframework.http.ContentDisposition.attachment;
 import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.IMAGE_PNG;
@@ -43,7 +43,7 @@ public class QRCodeController {
         // Usando switch expression para simplificar a lógica
         return switch (isDownload + "|" + isBase64) {
             case "true|false" ->
-                    just(ok().contentType(IMAGE_PNG).header(CONTENT_DISPOSITION, ContentDisposition.attachment().filename("qrcode.png").build().toString()).body(qrCode));
+                    just(ok().contentType(IMAGE_PNG).header(CONTENT_DISPOSITION, attachment().filename("qrcode.png").build().toString()).body(qrCode));
             case "false|true" ->
                     just(ok().contentType(APPLICATION_JSON).body(Map.of("image", qrCodeService.encodeBase64(qrCode))));
             case "false|false" ->
