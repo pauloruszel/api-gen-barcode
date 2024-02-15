@@ -3,6 +3,7 @@ package com.br.apigenbarcode.service;
 import com.br.apigenbarcode.entity.Convidado;
 import com.br.apigenbarcode.repository.ConvidadoRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -24,7 +25,28 @@ public class ConvidadoService {
 
     private final static String STATUS_NAO = "Não";
 
+    private void validarDadosConvidado(final String nome, final String email) {
+        log.info("inicio da validacao dos dados de convidado: nome: {} email: {}", nome, email);
+
+        if (StringUtils.isBlank(nome)) {
+            log.error("validacao falhou: O nome do convidado é necessario mas não foi fornecido.");
+            throw new IllegalArgumentException("O nome do convidado não pode ser nulo ou vazio.");
+        } else {
+            log.info("o nome do convidado '{}' passou na validacao: não é nulo e não está vazio.", nome);
+        }
+
+        if (email == null || !email.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}")) {
+            log.error("validacao falhou: O email fornecido '{}' é invalido.", email);
+            throw new IllegalArgumentException("O email do convidado é nulo ou invalido.");
+        } else {
+            log.info("O email do convidado '{}' passou na validacao: é um email valido.", email);
+        }
+        log.info("fim da validacao dos dados de convidado: nome: {} email: {}", nome, email);
+    }
+
     public Mono<Convidado> cadastrarConvidado(final String nome, final String email) {
+        validarDadosConvidado(nome, email);
+
         log.info("iniciando o cadastro do convidado com nome: {} e email: {}", nome, email);
         final var idUnico = gerarIdUnico();
 

@@ -1,6 +1,6 @@
 package com.br.apigenbarcode.controller;
 
-import com.br.apigenbarcode.record.QRCodeRequest;
+import com.br.apigenbarcode.domain.record.QRCodeRequest;
 import com.br.apigenbarcode.service.QRCodeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
