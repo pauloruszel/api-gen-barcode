@@ -1,6 +1,6 @@
 package com.br.apigenbarcode.controller;
 
-import com.br.apigenbarcode.record.QRCodeRequest;
+import com.br.apigenbarcode.domain.record.QRCodeRequest;
 import com.br.apigenbarcode.service.QRCodeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,6 @@ public class QRCodeController {
         final var isDownload = "true".equalsIgnoreCase(request.download());
         final var isBase64 = "true".equalsIgnoreCase(request.base64());
 
-        // Usando switch expression para simplificar a lógica
         return switch (isDownload + "|" + isBase64) {
             case "true|false" ->
                     just(ok().contentType(IMAGE_PNG).header(CONTENT_DISPOSITION, attachment().filename("qrcode.png").build().toString()).body(qrCode));
