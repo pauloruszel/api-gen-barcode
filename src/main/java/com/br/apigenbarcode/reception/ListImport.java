@@ -75,16 +75,18 @@ class ListImport {
                 if (!newIdentities.add(identity(row.name(), group))) {
                     throw new ResponseStatusException(BAD_REQUEST, "Há novos convidados indistinguíveis. Use grupos diferentes.");
                 }
-                additions.add(new GuestRow(null, group, row.name(), row.rsvp()));
+                additions.add(new GuestRow(null, group, row.name(), row.rsvp() == null ? Rsvp.UNKNOWN : row.rsvp()));
                 continue;
             }
             Guest existing = known.get(row.id());
             if (existing == null || !selected.add(row.id())) {
                 throw new ResponseStatusException(BAD_REQUEST, "Selecione cada convidado ativo uma única vez.");
             }
-            String group = row.group().isBlank() ? existing.group() : row.group();
-            if (!existing.name().equals(row.name()) || !existing.group().equals(group) || existing.rsvp() != row.rsvp()) {
-                updates.add(new GuestRow(row.id(), group, row.name(), row.rsvp()));
+            String group = row.group().isBlank() || normalize(row.group()).equals(normalize(existing.group()))
+                    ? existing.group() : row.group();
+            Rsvp status = row.rsvp() == null ? existing.rsvp() : row.rsvp();
+            if (!existing.name().equals(row.name()) || !existing.group().equals(group) || existing.rsvp() != status) {
+                updates.add(new GuestRow(row.id(), group, row.name(), status));
             }
         }
         List<UUID> removals = remove == null ? List.of() : remove.stream().distinct().toList();

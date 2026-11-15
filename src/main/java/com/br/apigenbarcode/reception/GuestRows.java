@@ -32,7 +32,7 @@ final class GuestRows {
             String name = required(row.name(), prefix + "nome");
             String group = row.group() == null || row.group().isBlank()
                     ? "" : required(row.group(), prefix + "grupo");
-            rows.add(new GuestRow(row.id(), group, name, row.rsvp() == null ? Rsvp.UNKNOWN : row.rsvp()));
+            rows.add(new GuestRow(row.id(), group, name, row.rsvp()));
         }
         return List.copyOf(rows);
     }

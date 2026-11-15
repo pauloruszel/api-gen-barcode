@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,12 +25,12 @@ class ReceptionStore {
         this.transaction = TransactionalOperator.create(manager);
     }
 
-    <T> Mono<T> inTransaction(Mono<T> work) {
-        return transaction.transactional(work);
-    }
-
     DatabaseClient database() {
         return db;
+    }
+
+    <T> Mono<T> inTransaction(Mono<T> work) {
+        return transaction.transactional(work);
     }
 
     Mono<Event> createEvent(String name) {
@@ -49,14 +50,16 @@ class ReceptionStore {
 
     Flux<Guest> guests(UUID eventId) {
         return db.sql("""
-                SELECT g.id, g.invite_id, i.label, g.name, g.rsvp
+                SELECT g.id, g.invite_id, i.label, g.name, g.rsvp, c.arrived_at
                 FROM reception_guest g
                 JOIN reception_invite i ON i.event_id = g.event_id AND i.id = g.invite_id
+                LEFT JOIN reception_checkin c ON c.event_id = g.event_id AND c.guest_id = g.id
                 WHERE g.event_id = :event AND g.active
                 ORDER BY i.label, g.name, g.id
                 """).bind("event", eventId).map((row, metadata) -> new Guest(
                 row.get("id", UUID.class), row.get("invite_id", UUID.class), row.get("label", String.class),
-                row.get("name", String.class), Rsvp.valueOf(row.get("rsvp", String.class)))).all();
+                row.get("name", String.class), Rsvp.valueOf(row.get("rsvp", String.class)),
+                row.get("arrived_at", OffsetDateTime.class))).all();
     }
 
     Mono<UUID> invite(UUID eventId, String group) {
@@ -68,12 +71,17 @@ class ReceptionStore {
     }
 
     Mono<Void> insert(UUID eventId, GuestRow row) {
+        return insertGuest(eventId, row).then();
+    }
+
+    Mono<UUID> insertGuest(UUID eventId, GuestRow row) {
+        UUID guestId = UUID.randomUUID();
         return invite(eventId, row.group()).flatMap(inviteId -> db.sql("""
                 INSERT INTO reception_guest(event_id, id, invite_id, name, rsvp)
                 VALUES (:event, :id, :invite, :name, :rsvp)
-                """).bind("event", eventId).bind("id", UUID.randomUUID()).bind("invite", inviteId)
+                """).bind("event", eventId).bind("id", guestId).bind("invite", inviteId)
                 .bind("name", row.name()).bind("rsvp", row.rsvp().name())
-                .fetch().rowsUpdated()).then();
+                .fetch().rowsUpdated()).thenReturn(guestId);
     }
 
     Mono<Long> nextRevision(UUID eventId) {

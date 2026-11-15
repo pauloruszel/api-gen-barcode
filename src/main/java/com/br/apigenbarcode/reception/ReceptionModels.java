@@ -1,5 +1,6 @@
 package com.br.apigenbarcode.reception;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,7 +11,7 @@ public final class ReceptionModels {
 
     public record Event(UUID id, String name, long revision) {}
     public record CreateEvent(String name) {}
-    public record Guest(UUID id, UUID inviteId, String group, String name, Rsvp rsvp) {}
+    public record Guest(UUID id, UUID inviteId, String group, String name, Rsvp rsvp, OffsetDateTime arrivedAt) {}
     public record GuestRow(UUID id, String group, String name, Rsvp rsvp) {}
     public record ImportRequest(long revision, List<GuestRow> rows, List<UUID> remove) {}
     public record ImportPreviewRequest(List<GuestRow> rows) {}

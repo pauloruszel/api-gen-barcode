@@ -24,9 +24,11 @@ import static org.springframework.http.HttpStatus.*;
 class DeskStore {
     private static final SecureRandom RANDOM = new SecureRandom();
     private final ReceptionStore lists;
+    private final ReceptionAudit audit;
 
-    DeskStore(ReceptionStore lists) {
+    DeskStore(ReceptionStore lists, ReceptionAudit audit) {
         this.lists = lists;
+        this.audit = audit;
     }
 
     Mono<OperatorAccess> createOperator(UUID eventId, String name) {
@@ -88,7 +90,9 @@ class DeskStore {
                 RETURNING arrived_at
                 """).bind("event", eventId).bind("guest", id).bind("operator", operator.id())
                 .map((row, metadata) -> new CheckinResult(id, true, row.get("arrived_at", OffsetDateTime.class)))
-                .one().switchIfEmpty(Mono.defer(() -> lists.database().sql("""
+                .one().flatMap(result -> audit.write(eventId, id, "CHECK_IN", operator.name(), "", result.arrivedAt())
+                        .thenReturn(result))
+                .switchIfEmpty(Mono.defer(() -> lists.database().sql("""
                         SELECT c.arrived_at FROM reception_checkin c
                         JOIN reception_guest g ON g.event_id = c.event_id AND g.id = c.guest_id
                         WHERE c.event_id = :event AND c.guest_id = :guest AND g.active

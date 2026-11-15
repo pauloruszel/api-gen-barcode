@@ -15,3 +15,9 @@ test('identifies the row when the name or identifier is invalid', () => {
   assert.throws(() => mapRows([['Ana', 'invalid']], columns), /linha 2/);
   assert.throws(() => mapRows([['']], columns), /linha 2/);
 });
+
+test('keeps missing RSVP distinct from a supplied pending status', () => {
+  const rows = mapRows([['Ana', ''], ['Bia', 'Pendente']], discoverColumns(['Nome', 'RSVP']));
+  assert.equal(rows[0].rsvp, null);
+  assert.equal(rows[1].rsvp, 'UNKNOWN');
+});

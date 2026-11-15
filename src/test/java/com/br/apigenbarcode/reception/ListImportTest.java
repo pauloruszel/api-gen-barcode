@@ -9,7 +9,7 @@ import static com.br.apigenbarcode.reception.ReceptionModels.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ListImportTest {
-    private final Guest ana = new Guest(UUID.randomUUID(), UUID.randomUUID(), "Família Silva", "Ana", Rsvp.YES);
+    private final Guest ana = new Guest(UUID.randomUUID(), UUID.randomUUID(), "Família Silva", "Ana", Rsvp.YES, null);
 
     @Test
     void usesStableIdEvenWhenNameAndGroupChange() {

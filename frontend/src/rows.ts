@@ -1,7 +1,7 @@
 import type { GuestRow, Rsvp } from './api.ts';
 
 export type ColumnMap = { name: number; group: number; id: number; rsvp: number };
-export const normalize = (text: string) => text.normalize('NFD').replace(/\p{M}/gu, '').trim().toLowerCase();
+export const normalize = (text: string) => text.normalize('NFD').replace(/\p{M}/gu, '').trim().replace(/\s+/g, ' ').toLowerCase();
 
 export function discoverColumns(headers: string[]): ColumnMap {
   const normalized = headers.map(normalize);
@@ -25,7 +25,7 @@ export function mapRows(data: string[][], columns: ColumnMap): GuestRow[] {
       throw new Error('ID inválido na linha ' + (index + 2) + '.');
     }
     const status = normalize(text(columns.rsvp));
-    const rsvp: Rsvp = ['sim', 'confirmado', 'yes'].includes(status) ? 'YES'
+    const rsvp: Rsvp | null = !status ? null : ['sim', 'confirmado', 'yes'].includes(status) ? 'YES'
       : ['nao', 'recusado', 'no'].includes(status) ? 'NO' : 'UNKNOWN';
     return { id: id || null, name, group: text(columns.group), rsvp };
   });

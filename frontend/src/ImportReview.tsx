@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { GuestRow, ImportPreview } from './api';
+import { normalize } from './rows';
 
 export function ImportReview({ preview, busy, onApply, onCancel }: {
   preview: ImportPreview;
@@ -17,7 +18,7 @@ export function ImportReview({ preview, busy, onApply, onCancel }: {
   }));
   const changed = rows.filter(row => {
     const guest = row.id ? people.get(row.id) : undefined;
-    return guest && (guest.name !== row.name || (row.group && guest.group !== row.group) || guest.rsvp !== row.rsvp);
+    return guest && (guest.name !== row.name || (row.group && normalize(guest.group) !== normalize(row.group)) || (row.rsvp && guest.rsvp !== row.rsvp));
   }).length;
   const canApply = choices.every(Boolean) && selected.size === choices.filter(choice => people.has(choice)).length;
 
@@ -27,9 +28,9 @@ export function ImportReview({ preview, busy, onApply, onCancel }: {
     <ol>{rows.map((row, index) => {
       const guest = row.id ? people.get(row.id) : undefined;
       const previous = guest ? guest.name + ' — ' + guest.group : '';
-      const moved = guest && row.group && row.group !== guest.group;
+      const moved = guest && row.group && normalize(row.group) !== normalize(guest.group);
       return <li key={index}>
-        <strong>{row.name}</strong>{row.group && ' · ' + row.group} · {row.rsvp}
+        <strong>{row.name}</strong>{row.group && ' · ' + row.group} · {row.rsvp ?? guest?.rsvp ?? 'Pendente'}
         {guest && <span> · Vinculado a {previous}</span>}
         {moved && <p>Troca de grupo. O convidado passará a aparecer no QR do novo convite.</p>}
         {preview.matches[index].needsReview && <label>Resolver {row.name}
@@ -54,7 +55,7 @@ export function ImportReview({ preview, busy, onApply, onCancel }: {
       {missing.map(guest => <label className="check" key={guest.id}>
         <input type="checkbox" checked={remove.includes(guest.id)} onChange={event =>
           setRemove(old => event.target.checked ? [...old, guest.id] : old.filter(id => id !== guest.id))} />
-        Remover {guest.name} — {guest.group}
+        Remover {guest.name} — {guest.group}{guest.arrivedAt && ' · Entrada já registrada e preservada no relatório'}
       </label>)}
     </>}
     <button disabled={busy || !canApply} onClick={() => onApply(rows, remove.filter(id => !selected.has(id)))}>Aplicar lista</button>

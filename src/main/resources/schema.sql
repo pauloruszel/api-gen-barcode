@@ -63,3 +63,15 @@ CREATE TABLE IF NOT EXISTS reception_checkin (
     FOREIGN KEY (event_id, guest_id) REFERENCES reception_guest(event_id, id),
     FOREIGN KEY (event_id, operator_id) REFERENCES reception_operator(event_id, id)
 );
+
+CREATE TABLE IF NOT EXISTS reception_log (
+    id BIGSERIAL PRIMARY KEY,
+    event_id UUID NOT NULL,
+    guest_id UUID NOT NULL,
+    action VARCHAR(20) NOT NULL,
+    actor VARCHAR(160) NOT NULL,
+    reason VARCHAR(160) NOT NULL,
+    arrived_at TIMESTAMPTZ,
+    recorded_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (event_id, guest_id) REFERENCES reception_guest(event_id, id)
+);

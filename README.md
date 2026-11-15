@@ -117,3 +117,48 @@ A API estará disponível em http://localhost:8080.
 
 ## Observações:
 A aplicação permite a geração de QR Codes personalizados, incluindo opções para definir o tamanho, as cores do primeiro plano e do fundo, e se a imagem deve ser baixada ou visualizada no navegador. Também é possível retornar a imagem em formato base64.
+
+## MVP de recepção
+
+Requisitos locais: Java 21, Maven 3.9+, Node.js 24 e PostgreSQL. Os comandos abaixo
+usam uma base local de desenvolvimento. A aplicação inicializa as tabelas.
+
+```bash
+export SPRING_R2DBC_URL=r2dbc:postgresql://localhost:5432/casamento
+export SPRING_R2DBC_USERNAME=seu_usuario
+export SPRING_R2DBC_PASSWORD=sua_senha
+export RECEPTION_ADMIN_KEY="$(openssl rand -hex 24)"
+
+mvn test
+mvn spring-boot:run
+```
+
+Em outro terminal, com a mesma variável `RECEPTION_ADMIN_KEY`:
+
+```bash
+cd frontend
+npm ci
+npm test
+npm run build
+npx playwright install chromium
+npm run test:e2e
+npm run dev
+```
+
+Abra o URL informado pelo Vite e use a chave do cerimonial para criar ou abrir um
+evento. O Vite encaminha `/api` para a API (porta 8080 por padrão). Se usar outra
+porta, defina `API_ORIGIN`. Para entrega ao piloto, sirva o frontend e a API na
+mesma origem HTTPS, com fallback para `index.html` na rota `/recepcao`. A câmera
+requer HTTPS nos aparelhos da equipe. O teste local no Chromium pode usar
+`CHROMIUM_PATH` com o caminho para um executável já instalado.
+
+Na revisão da planilha, use o CSV exportado com IDs para preservar a identidade
+dos convidados. A troca de grupo transfere a pessoa para o QR do novo convite.
+As remoções exigem confirmação na prévia e mantêm o histórico. A recepção
+precisa de conexão para registrar chegadas. Em uma queda, use o CSV da
+contingência, anote os horários e registre-os pelo painel quando voltar.
+
+A chave de cerimonial é compartilhada no piloto e dá acesso a todos os eventos
+da instalação. Use uma instalação de confiança por operação. Links da
+recepção são limitados a um evento, expiram em 24 horas e identificam o operador
+que registrou a chegada.

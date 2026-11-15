@@ -4,6 +4,7 @@ import { ImportForm } from './ImportForm';
 import { ImportReview } from './ImportReview';
 import { exportGuests } from './guestExport';
 import { AccessTools } from './AccessTools';
+import { Report } from './Report';
 
 export function Admin() {
   const [key, setKey] = useState('');
@@ -67,6 +68,8 @@ export function Admin() {
           </tr>)}</tbody></table>}
       </section>
       <AccessTools eventId={event.id} accessKey={key} guests={guests} />
+      <Report eventId={event.id} accessKey={key} revision={event.revision} onExtra={async () =>
+        open(await request<Event>(key, '/' + event.id))} />
     </>}
     {error && <p role="alert">{error}</p>}
   </main>;

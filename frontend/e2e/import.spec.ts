@@ -46,3 +46,15 @@ test('reviews a changed list, reuses a guest ID and retains missing people by de
   const updated = await (await request.get(api + '/' + event.id + '/guests', { headers })).json();
   expect(updated.find((guest: { id: string }) => guest.id === ana.id).inviteId).toBe(ana.inviteId);
 });
+
+test('imports the first worksheet of a real XLSX file', async ({ page }) => {
+  await page.goto('/');
+  await page.getByLabel('Chave do cerimonial').fill(process.env.RECEPTION_ADMIN_KEY!);
+  await page.getByLabel('Nome do evento').fill('Casamento Excel');
+  await page.getByRole('button', { name: 'Criar evento' }).click();
+  await page.getByLabel('Planilha de convidados').setInputFiles('e2e/fixtures/convidados.xlsx');
+  await page.getByRole('button', { name: 'Revisar importação' }).click();
+  await page.getByRole('button', { name: 'Aplicar lista' }).click();
+  await expect(page.getByRole('cell', { name: 'Cecília Gomes' })).toBeVisible();
+  await expect(page.getByRole('cell', { name: 'Confirmado' })).toBeVisible();
+});
