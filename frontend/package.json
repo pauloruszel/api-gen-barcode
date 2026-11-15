@@ -1,0 +1,27 @@
+{
+  "name": "reception-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "test": "node --experimental-strip-types --test src/*.test.ts",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "papaparse": "5.7.1",
+    "qr-scanner": "1.4.2",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "read-excel-file": "9.3.17"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.1",
+    "@types/node": "24.19.2",
+    "@types/papaparse": "5.5.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "typescript": "5.9.3",
+    "vite": "8.3.8"
+  }
+}
