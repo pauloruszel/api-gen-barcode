@@ -3,6 +3,7 @@ import { type Event, type Guest, type ImportPreview, request } from './api';
 import { ImportForm } from './ImportForm';
 import { ImportReview } from './ImportReview';
 import { exportGuests } from './guestExport';
+import { AccessTools } from './AccessTools';
 
 export function Admin() {
   const [key, setKey] = useState('');
@@ -65,6 +66,7 @@ export function Admin() {
             <td>{guest.name}</td><td>{guest.group}</td><td>{{ YES: 'Confirmado', NO: 'Recusado', UNKNOWN: 'Pendente' }[guest.rsvp]}</td>
           </tr>)}</tbody></table>}
       </section>
+      <AccessTools eventId={event.id} accessKey={key} guests={guests} />
     </>}
     {error && <p role="alert">{error}</p>}
   </main>;

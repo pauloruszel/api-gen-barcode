@@ -19,3 +19,5 @@ th, td { padding: 8px; border-bottom: 1px solid #dce2da; }
 .review li { margin-bottom: 12px; overflow-wrap: anywhere; }
 .check { display: flex; align-items: center; gap: 9px; }
 .check input { width: 20px; min-height: 20px; flex: 0 0 20px; }
+video { display: block; width: min(100%, 460px); aspect-ratio: 4 / 3; object-fit: contain; background: #101914; margin-top: 12px; }
+.qr { display: block; width: 220px; max-width: 100%; height: auto; }

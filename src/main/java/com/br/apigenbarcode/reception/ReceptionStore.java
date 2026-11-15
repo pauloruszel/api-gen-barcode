@@ -28,6 +28,10 @@ class ReceptionStore {
         return transaction.transactional(work);
     }
 
+    DatabaseClient database() {
+        return db;
+    }
+
     Mono<Event> createEvent(String name) {
         UUID id = UUID.randomUUID();
         return db.sql("INSERT INTO reception_event(id, name) VALUES (:id, :name)")

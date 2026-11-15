@@ -43,3 +43,23 @@ CREATE TABLE IF NOT EXISTS reception_list_revision (
     removals INTEGER NOT NULL,
     PRIMARY KEY (event_id, revision)
 );
+
+CREATE TABLE IF NOT EXISTS reception_operator (
+    event_id UUID NOT NULL REFERENCES reception_event(id),
+    id UUID NOT NULL,
+    name VARCHAR(160) NOT NULL,
+    token_hash VARCHAR(64) NOT NULL,
+    expires_at TIMESTAMPTZ NOT NULL,
+    PRIMARY KEY (event_id, id),
+    UNIQUE (event_id, token_hash)
+);
+
+CREATE TABLE IF NOT EXISTS reception_checkin (
+    event_id UUID NOT NULL,
+    guest_id UUID NOT NULL,
+    operator_id UUID NOT NULL,
+    arrived_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (event_id, guest_id),
+    FOREIGN KEY (event_id, guest_id) REFERENCES reception_guest(event_id, id),
+    FOREIGN KEY (event_id, operator_id) REFERENCES reception_operator(event_id, id)
+);

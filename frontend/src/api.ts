@@ -22,3 +22,6 @@ export type ImportPreview = {
   incoming: GuestRow[];
   matches: { id: string | null; needsReview: boolean }[];
 };
+
+export type DeskGuest = { id: string; inviteId: string; group: string; name: string; arrivedAt: string | null };
+export type CheckinResult = { id: string; recorded: boolean; arrivedAt: string };

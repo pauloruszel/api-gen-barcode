@@ -23,7 +23,6 @@ import static java.util.Base64.getEncoder;
 public class QRCodeService {
 
     public byte[] gerarQRCode(final String texto, final Integer scale, final String foreground, final String background) throws Exception {
-        log.info("gerando QR Code com texto: {}, scale: {}, foreground: {}, background: {}", texto, scale, foreground, background);
         validarParametros(texto, scale, foreground, background);
 
         final var matrix = new MultiFormatWriter().encode(texto, QR_CODE, scale, scale);
@@ -41,7 +40,6 @@ public class QRCodeService {
     }
 
     private void validarParametros(final String texto, final Integer scale, final String foreground, final String background) {
-        log.info("inicio das validacoes dos parametros com texto: {}, scale: {}, foreground: {}, background: {}", texto, scale, foreground, background);
         if (StringUtils.isBlank(texto)) {
             log.error("texto nao pode ser vazio");
             throw new IllegalArgumentException("Texto não pode ser vazio");
@@ -58,7 +56,6 @@ public class QRCodeService {
             log.error("background deve ser uma cor hexadecimal valida");
             throw new IllegalArgumentException("Background deve ser uma cor hexadecimal válida");
         }
-        log.info("fim das validacoes dos parametros com texto: {}, scale: {}, foreground: {}, background: {}", texto, scale, foreground, background);
     }
 
     private boolean isValidHexColor(final String color) {
@@ -67,7 +64,6 @@ public class QRCodeService {
 
     public Mono<byte[]> gerarQRCodeReativo(final String texto, final Integer scale, final String foreground, final String background) {
         return Mono.fromCallable(() -> {
-            log.info("gerando QR Code com texto: {}, scale: {}, foreground: {}, background: {}", texto, scale, foreground, background);
             validarParametros(texto, scale, foreground, background);
 
             final var hints = new HashMap<EncodeHintType, Object>();
