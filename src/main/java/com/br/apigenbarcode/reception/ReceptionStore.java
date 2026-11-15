@@ -8,20 +8,24 @@ import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.UUID;
 
 import static com.br.apigenbarcode.reception.ReceptionModels.*;
-import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Repository
 class ReceptionStore {
-    final DatabaseClient db;
-    final TransactionalOperator transaction;
+    private final DatabaseClient db;
+    private final TransactionalOperator transaction;
 
     ReceptionStore(DatabaseClient db, ReactiveTransactionManager manager) {
         this.db = db;
         this.transaction = TransactionalOperator.create(manager);
+    }
+
+    <T> Mono<T> inTransaction(Mono<T> work) {
+        return transaction.transactional(work);
     }
 
     Mono<Event> createEvent(String name) {
@@ -73,12 +77,30 @@ class ReceptionStore {
                 .bind("id", eventId).map((row, metadata) -> row.get("revision", Long.class)).one();
     }
 
-    Mono<Long> importFirst(UUID eventId, long revision, java.util.List<GuestRow> rows) {
-        return transaction.transactional(event(eventId, true).flatMap(event -> {
-            if (revision != 0 || event.revision() != revision) {
-                return Mono.error(new ResponseStatusException(CONFLICT, "A lista já foi importada."));
-            }
-            return Flux.fromIterable(rows).concatMap(row -> insert(eventId, row)).then(nextRevision(eventId));
-        }));
+    Mono<Void> update(UUID eventId, GuestRow row, Guest existing) {
+        Mono<UUID> target = existing.group().equals(row.group())
+                ? Mono.just(existing.inviteId()) : invite(eventId, row.group());
+        return target.flatMap(inviteId -> db.sql("""
+                UPDATE reception_guest SET invite_id = :invite, name = :name, rsvp = :rsvp
+                WHERE event_id = :event AND id = :id
+                """).bind("invite", inviteId).bind("name", row.name()).bind("rsvp", row.rsvp().name())
+                .bind("event", eventId).bind("id", row.id()).fetch().rowsUpdated()).then();
+    }
+
+    Mono<Void> deactivate(UUID eventId, UUID guestId) {
+        return db.sql("UPDATE reception_guest SET active = FALSE WHERE event_id = :event AND id = :id")
+                .bind("event", eventId).bind("id", guestId).fetch().rowsUpdated().then();
+    }
+
+    Mono<Void> recordRevision(UUID eventId, long revision, int additions, int updates, int removals) {
+        return db.sql("""
+                INSERT INTO reception_list_revision(event_id, revision, additions, updates, removals)
+                VALUES (:event, :revision, :additions, :updates, :removals)
+                """).bind("event", eventId).bind("revision", revision).bind("additions", additions)
+                .bind("updates", updates).bind("removals", removals).fetch().rowsUpdated().then();
+    }
+
+    Mono<List<Guest>> snapshot(UUID eventId) {
+        return guests(eventId).collectList();
     }
 }

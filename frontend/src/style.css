@@ -15,3 +15,7 @@ code { overflow-wrap: anywhere; }
 .columns { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); }
 table { border-collapse: collapse; width: 100%; margin-top: 12px; text-align: left; }
 th, td { padding: 8px; border-bottom: 1px solid #dce2da; }
+.review { border-top: 1px solid #dce2da; margin-top: 20px; padding-top: 12px; }
+.review li { margin-bottom: 12px; overflow-wrap: anywhere; }
+.check { display: flex; align-items: center; gap: 9px; }
+.check input { width: 20px; min-height: 20px; flex: 0 0 20px; }

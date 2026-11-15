@@ -12,5 +12,9 @@ public final class ReceptionModels {
     public record CreateEvent(String name) {}
     public record Guest(UUID id, UUID inviteId, String group, String name, Rsvp rsvp) {}
     public record GuestRow(UUID id, String group, String name, Rsvp rsvp) {}
-    public record ImportRequest(long revision, List<GuestRow> rows) {}
+    public record ImportRequest(long revision, List<GuestRow> rows, List<UUID> remove) {}
+    public record ImportPreviewRequest(List<GuestRow> rows) {}
+    public record ImportPreview(long revision, List<Guest> current, List<GuestRow> incoming,
+                                List<Match> matches) {}
+    public record Match(UUID id, boolean needsReview) {}
 }

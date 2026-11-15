@@ -33,3 +33,13 @@ CREATE TABLE IF NOT EXISTS reception_guest (
     PRIMARY KEY (event_id, id),
     FOREIGN KEY (event_id, invite_id) REFERENCES reception_invite(event_id, id)
 );
+
+CREATE TABLE IF NOT EXISTS reception_list_revision (
+    event_id UUID NOT NULL REFERENCES reception_event(id),
+    revision BIGINT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    additions INTEGER NOT NULL,
+    updates INTEGER NOT NULL,
+    removals INTEGER NOT NULL,
+    PRIMARY KEY (event_id, revision)
+);

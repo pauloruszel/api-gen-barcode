@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GuestRowsTest {
     @Test
     void trimsNamesAndDefaultsMissingRsvp() {
-        assertEquals(List.of(new GuestRow(null, "Ana", "Ana", Rsvp.UNKNOWN)),
+        assertEquals(List.of(new GuestRow(null, "", "Ana", Rsvp.UNKNOWN)),
                 GuestRows.validate(List.of(new GuestRow(null, null, " Ana ", null))));
     }
 

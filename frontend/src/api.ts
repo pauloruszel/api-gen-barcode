@@ -15,3 +15,10 @@ export async function request<T>(key: string, path: string, body?: unknown): Pro
   }
   return response.json();
 }
+
+export type ImportPreview = {
+  revision: number;
+  current: Guest[];
+  incoming: GuestRow[];
+  matches: { id: string | null; needsReview: boolean }[];
+};

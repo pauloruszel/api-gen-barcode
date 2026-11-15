@@ -14,10 +14,12 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 class ReceptionController {
     private final ReceptionStore store;
     private final AdminAccess access;
+    private final ListImport imports;
 
-    ReceptionController(ReceptionStore store, AdminAccess access) {
+    ReceptionController(ReceptionStore store, AdminAccess access, ListImport imports) {
         this.store = store;
         this.access = access;
+        this.imports = imports;
     }
 
     @PostMapping
@@ -41,11 +43,17 @@ class ReceptionController {
         return store.event(eventId, false).thenMany(store.guests(eventId)).collectList();
     }
 
-    @PostMapping("/{eventId}/imports")
-    Mono<Event> importFirst(@RequestHeader(value = AUTHORIZATION, required = false) String key,
-                            @PathVariable UUID eventId, @RequestBody ImportRequest request) {
+    @PostMapping("/{eventId}/imports/preview")
+    Mono<ImportPreview> preview(@RequestHeader(value = AUTHORIZATION, required = false) String key,
+                                @PathVariable UUID eventId, @RequestBody ImportPreviewRequest request) {
         access.requireAdmin(key);
-        return store.importFirst(eventId, request.revision(), GuestRows.validate(request.rows()))
-                .then(store.event(eventId, false));
+        return imports.preview(eventId, GuestRows.validate(request.rows()));
+    }
+
+    @PostMapping("/{eventId}/imports")
+    Mono<Event> apply(@RequestHeader(value = AUTHORIZATION, required = false) String key,
+                      @PathVariable UUID eventId, @RequestBody ImportRequest request) {
+        access.requireAdmin(key);
+        return imports.apply(eventId, request.revision(), GuestRows.validate(request.rows()), request.remove());
     }
 }
